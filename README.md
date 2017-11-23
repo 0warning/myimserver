@@ -1,5 +1,7 @@
 "# myimserver" 
 
-git remote add origin https://github.com/0warning/myimserver.git
+git add .
+
+git commit -m "."
 
 git push -u origin master
