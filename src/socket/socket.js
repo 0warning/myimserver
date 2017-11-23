@@ -6,11 +6,11 @@ function socket(port) {
 socket.prototype = {
    webSocket : null
    ,port : 0
-   ,initSocket : () => {
+   ,initSocket : function() {
       let server = require('ws').Server;
       this.webSocket = new server({ 'port' : this.port });
    }
-   ,server : () => {
+   ,server : function() {
       if (this.webSocket === null) {
          this.initSocket();
       }

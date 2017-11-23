@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<title>nginx</title>
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+</head>
+<body>
+<div id="div0">
+<span>通知列表</span>
+<ul></ul>
+</div>
+<div id="div1">
+<input type="text" placeholder="昵称"/>
+<br/>
+<input type="button" value="进入聊天室"/>
+</div>
+<script>
+let msgify = (type, code, action, text) => {
+	return JSON.stringify({'type':type, 'code':code, 'action':action, 'text':text});
+};
+let sendMsg = param => {
+	return msgify('system', 0, 'sendMsg', param);
+};
+let notice = param => {
+	$('#div0 ul').append('<li>'+param+'</li>');
+};
+let socket = new WebSocket('ws://127.0.0.1:5412');
+socket.addEventListener('open', () => {
+	console.log('socket open');
+});
+socket.addEventListener('message', event => {
+	let msg = JSON.parse(event.data);
+	if (msg.action === 'notice') {
+		notice(msg.text);
+		return;
+	}
+});
+socket.addEventListener('error', event => {
+	console.log('socket error');
+});
+socket.addEventListener('close', event => {
+	console.log('socket close');
+	notice('聊天室被关闭');
+});
+$('#div1 input[type=button]').on('click', function() {
+	let nickname = $('#div1 input[type=text]').val();
+	if (nickname == '') nickname = '匿名用户';
+	socket.send(msgify('system', 0, 'setName', nickname));
+});
+</script>
+</body>
+</html>
